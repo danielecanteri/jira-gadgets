@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+	<ModulePrefs title="__MSG_version-burndown-aggregated.title__" directory_title="__MSG_version-burndown-aggregated.title__"
+		description="__MSG_version-burndown-aggregated.description__">
+		<Optional feature="gadget-directory">
+			<Param name="categories">
+				Charts
+			</Param>
+		</Optional>
+		<Optional feature="atlassian.util" />
+		<Optional feature="auth-refresh" />
+		<Require feature="dynamic-height"/>
+		<Require feature="views" />
+		<Require feature="settitle" />
+        <Require feature="setprefs"/>
+		<Require feature="oauthpopup" />
+		#oauth
+		#supportedLocales("gadget.common")
+		<Locale
+			messages="__ATLASSIAN_BASE_URL__/download/resources/com.acme.jira-burndown-charts/i18n/ALL_ALL.xml" />
+	</ModulePrefs>
+    <UserPref name="isConfigured" datatype="hidden" default_value="false"/>
+	<UserPref name="projectOrFilterId" datatype="hidden" />
+	<UserPref name="projectId" datatype="hidden"/>
+	<Content type="html" view="profile">
+		<![CDATA[
+    #requireResource("com.atlassian.jira.gadgets:common")
+    #requireResource("com.acme.jira-burndown-charts:jira-burndown-charts-resources")
+    #includeResources()
+    <script type="text/javascript">
+    
+    
+       (function () {
+    var gadget = AJS.Gadget({
+        baseUrl: "__ATLASSIAN_BASE_URL__",
+        useOauth: "/rest/gadget/1.0/currentUser",
+ config: {
+                 descriptor: function(args)
+                 {
+                     var gadget = this;
+                     gadgets.window.setTitle("__MSG_version-burndown-aggregated.config.title__");
+                     var projectPicker = AJS.gadget.fields.projectPicker(gadget, "projectId", args.projectOptions);
+ 
+                     return {
+ 
+                         theme : function()
+                         {
+//                             if (gadgets.window.getViewportDimensions().width < 450)
+//                             {
+                                 return "gdt top-label";
+//                             }
+//                             else
+//                             {
+//                                 return "gdt";
+//                             }
+                         }(),
+                         fields: [
+                             projectPicker,
+                             AJS.gadget.fields.nowConfigured()
+                         ]
+                     };
+                 },
+                 args: function()
+                 {
+                     return [
+                         {
+                             key: "projectOptions",
+                             ajaxOptions:  "/rest/gadget/1.0/filtersAndProjects?showFilters=false"
+ 
+                         }
+ 
+ 
+                     ];
+                 }()
+             },
+                     view: {
+            template: function(args) {
+                var gadget = this;
+                console.log("gadget");
+                console.log(gadget);
+                console.log("args");
+                console.log(args);
+                console.log(args.burndown);
+                console.log(args.burndown.version);
+                
+        // Some raw data (not necessarily accurate)
+        var data = google.visualization.arrayToDataTable(args.burndown.dataTable);
+        var options = {
+          title : 'Project '+args.burndown.project.name+', burndown of version ' + args.burndown.version.name,
+//          vAxis: {title: "Hours"},
+//          hAxis: {title: "Month"},
+          seriesType: "bars",
+          series: {0: {type: "area"}, 1: {type: "area"}}
+        };
+		gadget.getView().html("<div id=\"chart_div\" style=\"width: 600px; height: 250px;\"></div>");
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+                
+            },
+            args: [{
+                key: "burndown",
+                ajaxOptions: function() {
+                    return {
+                        url: "/rest/jira-burndown-charts/1.0/burndown.json",
+                        data:  {
+                                            projectId : gadgets.util.unescapeString(this.getPref("projectId"))
+                                          }
+                    };
+                }
+            }]
+        }
+    });
+})();
+
+
+    </script>
+    ]]>
+	</Content>
+</Module>
