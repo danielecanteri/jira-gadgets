@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-	<ModulePrefs title="__MSG_version-burndown-aggregated.title__" directory_title="__MSG_version-burndown-aggregated.title__"
-		description="__MSG_version-burndown-aggregated.description__">
+	<ModulePrefs title="__MSG_project-filters.title__" directory_title="__MSG_project-filters.title__"
+		description="__MSG_project-filters.description__">
 		<Optional feature="gadget-directory">
 			<Param name="categories">
 				Charts
@@ -17,7 +17,7 @@
 		#oauth
 		#supportedLocales("gadget.common")
 		<Locale
-			messages="__ATLASSIAN_BASE_URL__/download/resources/com.acme.jira-burndown-charts/i18n/ALL_ALL.xml" />
+			messages="__ATLASSIAN_BASE_URL__/download/resources/com.acme.jira-gadgets/i18n/ALL_ALL.xml" />
 	</ModulePrefs>
     <UserPref name="isConfigured" datatype="hidden" default_value="false"/>
 	<UserPref name="projectOrFilterId" datatype="hidden" />
@@ -25,7 +25,7 @@
 	<Content type="html" view="profile">
 		<![CDATA[
     #requireResource("com.atlassian.jira.gadgets:common")
-    #requireResource("com.acme.jira-burndown-charts:jira-burndown-charts-resources")
+    #requireResource("com.acme.jira-gadgets:project-filters-resources")
     #includeResources()
     <script type="text/javascript">
     
@@ -38,7 +38,7 @@
                  descriptor: function(args)
                  {
                      var gadget = this;
-                     gadgets.window.setTitle("__MSG_version-burndown-aggregated.config.title__");
+                     gadgets.window.setTitle("__MSG_project-filters.config.title__");
                      var projectPicker = AJS.gadget.fields.projectPicker(gadget, "projectId", args.projectOptions);
  
                      return {
@@ -76,32 +76,32 @@
                      view: {
             template: function(args) {
                 var gadget = this;
-                console.log("gadget");
-                console.log(gadget);
-                console.log("args");
-                console.log(args);
-                console.log(args.burndown);
-                console.log(args.burndown.version);
+				var filtersList = AJS.$("<ul/>");
+ 
+                AJS.$(args.filtersData.filters).each(function() {
+                    filtersList.append(
+                        AJS.$("<li/>").append(
+                            AJS.$("<a/>").attr({
+                                target: "_parent",
+//                                href: "__ATLASSIAN_BASE_URL__" + "/secure/IssueNavigator.jspa?mode=hide&requestId=" + this.id
+                                href: "__ATLASSIAN_BASE_URL__" + "/issues/?filter=" + this.id
+                            }).text(this.name)        
+                        )
+                    );
+                });
+ 
+                gadget.getView().html(filtersList);
                 
-        // Some raw data (not necessarily accurate)
-        var data = google.visualization.arrayToDataTable(args.burndown.dataTable);
-        var options = {
-          title : 'Project '+args.burndown.project.name+', burndown of version ' + args.burndown.version.name,
-//          vAxis: {title: "Hours"},
-//          hAxis: {title: "Month"},
-          seriesType: "bars",
-          series: {0: {type: "area"}, 1: {type: "area"}}
-        };
-		gadget.getView().html("<div id=\"chart_div\" style=\"width: 600px; height: 250px;\"></div>");
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+                //       var html = 
+
+		// gadget.getView().html("<div id=\"chart_div\" style=\"width: 600px; height: 250px;\"></div>");
                 
             },
             args: [{
-                key: "burndown",
+                key: "filtersData",
                 ajaxOptions: function() {
                     return {
-                        url: "/rest/jira-burndown-charts/1.0/burndown.json",
+                        url: "/rest/jira-gadgets/1.0/projectfilters.json",
                         data:  {
                                             projectId : gadgets.util.unescapeString(this.getPref("projectId"))
                                           }
