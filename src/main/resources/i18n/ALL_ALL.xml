@@ -1,9 +1,6 @@
 <messagebundle>
-	<msg name="version-burndown-aggregated.title">Version burndown aggregated</msg>
-	<msg name="version-burndown-aggregated.description">Version burndown aggregated.</msg>
-	<msg name="version-burndown-aggregated.config.title">Version burndown aggregated configuration</msg>
+	<msg name="project-filters.title">Project filters</msg>
+	<msg name="project-filters.description">Project filters.</msg>
+	<msg name="project-filters.config.title">Project filters configuration</msg>
 
-	<msg name="user-load.title">User load</msg>
-	<msg name="user-load.description">User load.</msg>
-	<msg name="user-load.config.title">User load configuration</msg>
 </messagebundle>

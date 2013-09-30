@@ -26,16 +26,16 @@
         Automatically finds all JAX-RS resource classes in the plugin and
         publishes them.
      -->
-    <rest key="jira-burndown-charts" path="/jira-burndown-charts" version="1.0">
+    <rest key="jira-gadgets" path="/jira-gadgets" version="1.0">
         <description>Provides the REST resource for the project list.</description>
     </rest>
      
     <!-- add our web resources -->
-    <web-resource key="jira-burndown-charts-resources" name="jira-burndown-charts Web Resources">
+    <web-resource key="project-filters-resources" name="project-filters Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         
-        <resource type="download" name="jira-burndown-charts.css" location="/css/jira-burndown-charts.css"/>
-        <resource type="download" name="jira-burndown-charts.js" location="/js/jira-burndown-charts.js"/>
+        <resource type="download" name="project-filters.css" location="/css/project-filters.css"/>
+        <resource type="download" name="project-filters.js" location="/js/project-filters.js"/>
         <resource type="download" name="images/" location="/images"/>
 
         <context>jira-burndown-charts</context>

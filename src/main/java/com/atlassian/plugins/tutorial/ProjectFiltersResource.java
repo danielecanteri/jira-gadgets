@@ -2,14 +2,8 @@ package com.atlassian.plugins.tutorial;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -22,25 +16,17 @@ import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
 
-import com.acme.jiracharts.core.domain.issue.IssueRepository;
-import com.acme.jiracharts.core.domain.version.Version;
-import com.acme.jiracharts.core.domain.version.VersionRepository;
-import com.acme.jiracharts.jira.JiraIssueRepository;
-import com.acme.jiracharts.jira.JiraVersionRepository;
+import com.acme.jiracharts.core.domain.filter.Filter;
+import com.acme.jiracharts.core.domain.filter.FilterRepository;
+import com.acme.jiracharts.jira.JiraFilterRepository;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.bc.JiraServiceContextImpl;
 import com.atlassian.jira.bc.filter.SearchRequestService;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.ProjectService.GetProjectResult;
 import com.atlassian.jira.bc.project.version.VersionService;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.search.SearchRequest;
-import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
-import com.atlassian.jira.sharing.search.ProjectShareTypeSearchParameter;
-import com.atlassian.jira.sharing.search.SharedEntitySearchParametersBuilder;
-import com.atlassian.jira.sharing.search.SharedEntitySearchResult;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
@@ -56,9 +42,9 @@ public class ProjectFiltersResource {
 	private SearchService searchService;
 	private ProjectService projectService;
 	private VersionService versionService;
-	private IssueRepository issueRepository;
-	private VersionRepository versionRepository;
+	private FilterRepository issueRepository;
 	private SearchRequestService searchRequestService;
+	private JiraFilterRepository filterRepository;
 
 	/**
 	 * Constructor.
@@ -85,8 +71,7 @@ public class ProjectFiltersResource {
 		this.userUtil = userUtil;
 		this.permissionManager = permissionManager;
 		this.searchRequestService = searchRequestService;
-		this.issueRepository = new JiraIssueRepository(searchService);
-		this.versionRepository = new JiraVersionRepository();
+		this.filterRepository = new JiraFilterRepository(searchRequestService);
 
 	}
 
@@ -111,17 +96,16 @@ public class ProjectFiltersResource {
 			User user = userUtil.getUser(username);
 			GetProjectResult projectByKey = projectService.getProjectById(user,
 					projectId);
-			Project project = projectByKey.getProject();
 
-			SharedEntitySearchParametersBuilder b = new SharedEntitySearchParametersBuilder();
-			b.setShareTypeParameter(new ProjectShareTypeSearchParameter(project
-					.getId()));
-			SharedEntitySearchResult<SearchRequest> search = searchRequestService.search(new JiraServiceContextImpl(user),
-					b.toSearchParameters(), 1, 100);
+			List<Filter> filters = filterRepository.filtersSharedByProject(
+					user, projectId);
+			for (Filter filter : filters) {
+				System.out.println(filter.getName());
+			}
 
-			search.getResults()
+			ProjectFilters projectFilters = ProjectFilters.fromFilters(filters);
 
-			return Response.ok(result).build();
+			return Response.ok(projectFilters).build();
 		} catch (RuntimeException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);

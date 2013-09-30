@@ -1,13 +1,11 @@
-package com.acme.jiracharts.core.domain.issue;
+package com.acme.jiracharts.core.domain.filter;
 
 import java.util.List;
 
-import com.acme.jiracharts.core.domain.version.Version;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.issue.Issue;
 
-public interface IssueRepository {
+public interface FilterRepository {
 
-	List<Issue> allIssuesForVersion(User user, Version firstUnreleased);
+	List<Filter> filtersSharedByProject(User user, Long projectId);
 
 }

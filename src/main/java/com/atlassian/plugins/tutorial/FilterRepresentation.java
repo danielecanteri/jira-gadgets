@@ -3,7 +3,7 @@ package com.atlassian.plugins.tutorial;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.atlassian.jira.project.Project;
+import com.acme.jiracharts.core.domain.filter.Filter;
 
 /**
  * JAXB representation of a project's information. This can be marshalled as
@@ -12,54 +12,23 @@ import com.atlassian.jira.project.Project;
 // @Immutable
 @SuppressWarnings("UnusedDeclaration")
 @XmlRootElement
-public class ProjectRepresentation {
+public class FilterRepresentation {
 	@XmlElement
 	private Long id;
 
 	@XmlElement
-	private String key;
-
-	@XmlElement
 	private String name;
-
-	@XmlElement
-	private String projectUrl;
-
-	@XmlElement
-	private String projectLead;
-
-	@XmlElement
-	private String description;
 
 	// This private constructor isn't used by any code, but JAXB requires any
 	// representation class to have a no-args constructor.
-	private ProjectRepresentation() {
-		id = null;
-		key = null;
-		name = null;
-		projectUrl = null;
-		projectLead = null;
-		description = null;
+	private FilterRepresentation() {
 	}
 
-	/**
-	 * Initializes the representation's values to those in the specified
-	 * {@code Project}.
-	 * 
-	 * @param project
-	 *            the project to use for initialization
-	 */
-	public ProjectRepresentation(Project project) {
-		this.id = project.getId();
-		this.key = project.getKey();
-		this.name = project.getName();
-		this.projectUrl = project.getUrl();
-		this.projectLead = project.getLead().getDisplayName();
-		this.description = project.getDescription();
-	}
-
-	public static ProjectRepresentation fromProject(Project project) {
-		return new ProjectRepresentation(project);
+	public static FilterRepresentation fromFilter(Filter filter) {
+		FilterRepresentation filterRepresentation = new FilterRepresentation();
+		filterRepresentation.id = filter.getId();
+		filterRepresentation.name = filter.getName();
+		return filterRepresentation;
 	}
 
 }

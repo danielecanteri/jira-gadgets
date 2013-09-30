@@ -1,59 +1,31 @@
 package com.atlassian.plugins.tutorial;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.acme.jiracharts.core.domain.filter.Filter;
+
 @SuppressWarnings("UnusedDeclaration")
 @XmlRootElement
-public class VersionBurndown {
+public class ProjectFilters {
 
 	@XmlElement
-	private VersionRepresentation version;
+	private Collection<FilterRepresentation> filters;
 
-	@XmlElement
-	private ProjectRepresentation project;
-
-	@XmlElement
-	private Collection<String> dates;
-
-	@XmlElement
-	private Collection<Collection<?>> dataTable;
-
-	public VersionBurndown() {
+	public ProjectFilters() {
 	}
 
-	public VersionRepresentation getVersion() {
-		return version;
-	}
-
-	public void setVersion(VersionRepresentation version) {
-		this.version = version;
-	}
-
-	public Collection<String> getDates() {
-		return dates;
-	}
-
-	public void setDates(Collection<String> dates) {
-		this.dates = dates;
-	}
-
-	public Collection<Collection<?>> getDataTable() {
-		return dataTable;
-	}
-
-	public void setDataTable(Collection<Collection<?>> dataTable) {
-		this.dataTable = dataTable;
-	}
-
-	public ProjectRepresentation getProject() {
-		return project;
-	}
-
-	public void setProject(ProjectRepresentation project) {
-		this.project = project;
+	public static ProjectFilters fromFilters(List<Filter> filters) {
+		ProjectFilters projectFilters = new ProjectFilters();
+		projectFilters.filters = new ArrayList<FilterRepresentation>();
+		for (Filter filter : filters) {
+			projectFilters.filters.add(FilterRepresentation.fromFilter(filter));
+		}
+		return projectFilters;
 	}
 
 }
