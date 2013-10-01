@@ -82,9 +82,9 @@
                     filtersList.append(
                         AJS.$("<li/>").append(
                             AJS.$("<a/>").attr({
-                                target: "_parent",
-//                                href: "__ATLASSIAN_BASE_URL__" + "/secure/IssueNavigator.jspa?mode=hide&requestId=" + this.id
-                                href: "__ATLASSIAN_BASE_URL__" + "/issues/?filter=" + this.id
+                                target: "_blank",
+                                href: "__ATLASSIAN_BASE_URL__" + "/secure/IssueNavigator.jspa?mode=hide&requestId=" + this.id
+//                                href: "__ATLASSIAN_BASE_URL__" + "/issues/?filter=" + this.id
                             }).text(this.name)        
                         )
                     );
